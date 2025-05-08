@@ -34,6 +34,12 @@ on:
         required: true
         default: true
 
+      enable_ytunshort:
+       description: "Integrate ytunshort"
+       type: boolean
+       required: true
+       default: true
+
       ipa_url:
         description: "URL to the decrypted IPA file"
         default: ""
@@ -70,7 +76,6 @@ concurrency:
 
 jobs:
   build:
-    name: 
     runs-on: macos-latest
     permissions:
       contents: write
@@ -222,6 +227,12 @@ jobs:
           cd ${{ github.workspace }}
           git clone --quiet --depth=1 --recurse-submodules https://github.com/therealFoxster/DontEatMyContent.git
 
+      - name: Clone YTUnShorts
+        if: ${{ inputs.enable_ytunshort }}
+        run: |
+          cd ${{ github.workspace }}
+          git clone --quiet --depth=1 https://github.com/PoomSmart/YTUnShorts.git
+
       - name: Build YouPiP
         if: ${{ inputs.enable_youpip }}
         run: |
@@ -285,11 +296,19 @@ jobs:
         env:
           THEOS: ${{ github.workspace }}/theos
 
+      - name: Build YTUnShorts
+        if: ${{ inputs.enable_ytunshort }}
+        run: |
+          cd ${{ github.workspace }}/YTUnShorts
+          make clean package DEBUG=0 FINALPACKAGE=1
+          mv packages/*.deb ${{ github.workspace }}/ytunshort.deb
+        
+
       - name: Inject tweaks into IPA
         run: |
           tweaks="ytplus.deb OpenYoutubeSafariExtension.appex"
 
-          for deb in youpip.deb ytuhd.deb ryd.deb ygs.deb yq.deb ytvo.deb demc.deb; do
+          for deb in youpip.deb ytuhd.deb ryd.deb ygs.deb yq.deb ytvo.deb demc.deb ytunshort; do
             if [ -f "$deb" ]; then
               tweaks="$tweaks $deb"
             fi
