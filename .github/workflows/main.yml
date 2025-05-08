@@ -296,6 +296,8 @@ jobs:
           cd ${{ github.workspace }}/YTUnShorts
           make clean package DEBUG=0 FINALPACKAGE=1
           mv packages/*.deb ${{ github.workspace }}/ytunshort.deb
+        env:
+          THEOS: ${{ github.workspace }}/theos
         
 
       - name: Inject tweaks into IPA
