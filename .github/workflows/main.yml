@@ -16,12 +16,6 @@ on:
         required: true
         default: true
 
-      enable_ryd:
-        description: "Integrate Return YouTube Dislikes"
-        type: boolean
-        required: true
-        default: true
-
       enable_yq:
         description: "Integrate YouQuality"
         type: boolean
